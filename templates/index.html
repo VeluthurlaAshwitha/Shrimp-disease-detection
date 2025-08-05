@@ -1,0 +1,421 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shrimp Disease Detection</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1a73e8, #0d47a1);
+            color: #fff;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+        
+        h1, h2, h3 {
+            margin-bottom: 15px;
+        }
+        
+        .card {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+            background-color: #f5f5f5;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .upload-area:hover {
+            border-color: #1a73e8;
+            background-color: #e8f0fe;
+        }
+        
+        .upload-area.dragover {
+            border-color: #34a853;
+            background-color: #e6f4ea;
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: #1a73e8;
+            margin-bottom: 15px;
+        }
+        
+        .upload-area input[type="file"] {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+        
+        .btn {
+            background-color: #1a73e8;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: inline-block;
+            margin: 10px 5px;
+            text-align: center;
+        }
+        
+        .btn:hover {
+            background-color: #0d47a1;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .loader {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #1a73e8;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .result-container {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .result-image {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        
+        .result-info {
+            background-color: #f5f5f5;
+            padding: 20px;
+            border-radius: 8px;
+        }
+        
+        .diagnosis {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0d47a1;
+            margin-bottom: 10px;
+        }
+        
+        .confidence {
+            font-size: 18px;
+            color: #555;
+            margin-bottom: 20px;
+        }
+        
+        .tag {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            background-color: #1a73e8;
+            color: #fff;
+            margin-right: 5px;
+            font-size: 14px;
+        }
+        
+        .tag.healthy {
+            background-color: #34a853;
+        }
+        
+        .tag.disease {
+            background-color: #ea4335;
+        }
+        
+        .flex-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .flex-item {
+            flex: 1;
+            min-width: 300px;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            color: #555;
+            font-size: 14px;
+        }
+        
+        @media (max-width: 768px) {
+            .flex-container {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Shrimp Disease Detection</h1>
+            <p>AI-powered detection for shrimp diseases</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="card">
+            <h2>Detect Shrimp Diseases</h2>
+            <p>Upload an image of a shrimp to detect potential diseases.</p>
+            
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">📁</div>
+                <p>Drag and drop an image here or click to browse</p>
+                <p style="font-size:0.9em; color:#666">Supports JPG, JPEG, PNG files</p>
+                <input type="file" id="imageUpload" accept=".jpg,.jpeg,.png">
+            </div>
+            
+            <div style="text-align:center">
+                <button class="btn" id="analyzeBtn" disabled>Analyze Image</button>
+            </div>
+            
+            <div class="loader" id="loader"></div>
+            
+            <div class="result-container" id="resultContainer">
+                <h3>Analysis Results</h3>
+                
+                <div class="flex-container">
+                    <div class="flex-item">
+                        <img src="" alt="Analyzed Image" class="result-image" id="resultImage">
+                    </div>
+                    <div class="flex-item">
+                        <div class="result-info">
+                            <div class="diagnosis" id="resultClass">Healthy</div>
+                            <div class="confidence" id="resultConfidence">Confidence: 95%</div>
+                            <div id="resultTags">
+                                <span class="tag healthy">Healthy</span>
+                            </div>
+                            <div style="margin-top:20px">
+                                <h4>Description:</h4>
+                                <p id="resultDescription">This shrimp appears to be healthy with no visible signs of disease.</p>
+                            </div>
+                            <div style="margin-top:20px">
+                                <h4>Recommendations:</h4>
+                                <ul id="recommendations"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="text-align:center; margin-top:20px">
+                    <button class="btn" id="newImageBtn">Analyze New Image</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <p>© 2025 Shrimp Disease Detection System | Powered by YOLOv8</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Elements
+            const uploadArea = document.getElementById('uploadArea');
+            const imageUpload = document.getElementById('imageUpload');
+            const analyzeBtn = document.getElementById('analyzeBtn');
+            const loader = document.getElementById('loader');
+            const resultContainer = document.getElementById('resultContainer');
+            const resultImage = document.getElementById('resultImage');
+            const resultClass = document.getElementById('resultClass');
+            const resultConfidence = document.getElementById('resultConfidence');
+            const resultTags = document.getElementById('resultTags');
+            const resultDescription = document.getElementById('resultDescription');
+            const recommendations = document.getElementById('recommendations');
+            const newImageBtn = document.getElementById('newImageBtn');
+            
+            // Handle drag and drop
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', () => {
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                
+                if (e.dataTransfer.files.length) {
+                    imageUpload.files = e.dataTransfer.files;
+                    handleFileSelect();
+                }
+            });
+            
+            // Handle file selection
+            imageUpload.addEventListener('change', handleFileSelect);
+            
+            function handleFileSelect() {
+                const file = imageUpload.files[0];
+                
+                if (file) {
+                    // Validate file type
+                    const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                    if (!validTypes.includes(file.type)) {
+                        alert('Please select a valid image file (JPG, JPEG, PNG)');
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        // Create and display preview image
+                        uploadArea.innerHTML = `
+                            <img src="${e.target.result}" alt="Preview" style="max-height:200px; max-width:100%;">
+                            <p style="margin-top:10px">${file.name}</p>
+                            <input type="file" id="imageUpload" accept=".jpg,.jpeg,.png">
+                        `;
+                        
+                        // Re-attach event listener to the new file input
+                        document.getElementById('imageUpload').addEventListener('change', handleFileSelect);
+                        
+                        // Enable analyze button
+                        analyzeBtn.removeAttribute('disabled');
+                    };
+                    
+                    reader.readAsDataURL(file);
+                }
+            }
+            
+            // Handle analyze button click
+            analyzeBtn.addEventListener('click', () => {
+                const file = imageUpload.files[0];
+                if (!file) return;
+                
+                // Hide analyze button, show loader
+                analyzeBtn.style.display = 'none';
+                loader.style.display = 'block';
+                
+                // Create form data
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                // Send request to backend
+                fetch('/detect', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Hide loader
+                    loader.style.display = 'none';
+                    
+                    if (data.error) {
+                        alert(`Error: ${data.error}`);
+                        analyzeBtn.style.display = 'inline-block';
+                        return;
+                    }
+                    
+                    // Update results
+                    resultImage.src = data.image_path;
+                    resultClass.textContent = data.class.charAt(0).toUpperCase() + data.class.slice(1);
+                    resultConfidence.textContent = `Confidence: ${data.confidence}%`;
+                    
+                    // Update tag
+                    const tagClass = data.class === 'healthy' ? 'healthy' : 'disease';
+                    resultTags.innerHTML = `
+                        <span class="tag ${tagClass}">${data.class.charAt(0).toUpperCase() + data.class.slice(1)}</span>
+                    `;
+                    
+                    // Update description
+                    resultDescription.textContent = data.description;
+                    
+                    // Update recommendations
+                    recommendations.innerHTML = '';
+                    data.recommendations.forEach(rec => {
+                        const li = document.createElement('li');
+                        li.textContent = rec;
+                        recommendations.appendChild(li);
+                    });
+                    
+                    // Show results
+                    resultContainer.style.display = 'block';
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while processing the image. Please try again.');
+                    loader.style.display = 'none';
+                    analyzeBtn.style.display = 'inline-block';
+                });
+            });
+            
+            // Handle new image button click
+            newImageBtn.addEventListener('click', () => {
+                resultContainer.style.display = 'none';
+                uploadArea.innerHTML = `
+                    <div class="upload-icon">📁</div>
+                    <p>Drag and drop an image here or click to browse</p>
+                    <p style="font-size:0.9em; color:#666">Supports JPG, JPEG, PNG files</p>
+                    <input type="file" id="imageUpload" accept=".jpg,.jpeg,.png">
+                `;
+                
+                // Re-attach event listener
+                document.getElementById('imageUpload').addEventListener('change', handleFileSelect);
+                
+                analyzeBtn.style.display = 'inline-block';
+                analyzeBtn.setAttribute('disabled', true);
+            });
+        });
+    </script>
+</body>
+</html>
