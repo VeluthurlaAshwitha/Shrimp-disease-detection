@@ -1,0 +1,19 @@
+train: C:\Users\sasha\OneDrive\Desktop\yolo\shrimp_detection\dataset/train
+val: C:\Users\sasha\OneDrive\Desktop\yolo\shrimp_detection\dataset/validation
+test: C:\Users\sasha\OneDrive\Desktop\yolo\shrimp_detection\dataset/test
+
+nc: 2
+names: ["diseased", "healthy"]
+
+# Optimized augmentation for speed
+mosaic: 0.7
+mixup: 0.2
+hsv_h: 0.015
+hsv_s: 0.5
+hsv_v: 0.7
+degrees: 10.0
+translate: 0.1
+scale: 0.4
+shear: 0.0
+flipud: 0.2
+fliplr: 0.5

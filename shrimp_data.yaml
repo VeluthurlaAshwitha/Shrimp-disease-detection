@@ -1,0 +1,21 @@
+train: C:\Users\sasha\OneDrive\Desktop\yolo\dataset/train
+val: C:\Users\sasha\OneDrive\Desktop\yolo\dataset/validation
+test: C:\Users\sasha\OneDrive\Desktop\yolo\dataset/test
+
+nc: 2
+names: ["diseased", "healthy"]
+
+# Augmentation parameters optimized for aquaculture/shrimp images
+mosaic: 0.9  # mosaic augmentation - increased for better variability
+mixup: 0.3   # mixup augmentation
+copy_paste: 0.1  # copy-paste augmentation - reduced for underwater imagery
+hsv_h: 0.015  # hue augmentation
+hsv_s: 0.5    # saturation augmentation - adjusted for underwater colors
+hsv_v: 0.7    # value augmentation - increased for underwater luminosity variations
+degrees: 15.0  # rotation augmentation - increased for orientation variability
+translate: 0.2  # translation augmentation - increased
+scale: 0.6    # scale augmentation - increased for size variability
+shear: 0.1    # shear augmentation - minor shear added
+perspective: 0.0  # perspective augmentation
+flipud: 0.3   # vertical flip augmentation - added for underwater orientation
+fliplr: 0.5   # horizontal flip augmentation
